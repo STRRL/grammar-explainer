@@ -3,10 +3,19 @@ import { useState } from 'react'
 
 export default function Home() {
 
-
   const [sentence, setSentence] = useState('')
-  const [explanation, setExplanation] = useState('')
   const [translation, setTranslation] = useState('')
+  const [naturalExplanation, setNaturalExplanation] = useState('')
+  const [explanation, setExplanation] = useState('')
+
+  const fetchNaturalExplanation = async (sentence: string) => {
+    const result = await fetch('/api/natural-grammar-explain', {
+      method: 'POST',
+      body: JSON.stringify({ sentence: sentence }),
+    })
+    const content = await result.text()
+    setNaturalExplanation(content)
+  }
 
   const fetchTranslation = async (sentence: string) => {
     const result = await fetch('/api/translate', {
@@ -47,6 +56,7 @@ export default function Home() {
             <button className="btn btn-primary mx-auto w-1/2"
               onClick={() => {
                 fetchGrammarExplanation(sentence)
+                fetchNaturalExplanation(sentence)
                 fetchTranslation(sentence)
               }}
             >Explain!</button>
@@ -56,6 +66,9 @@ export default function Home() {
           </div>
           <div className='my-4'>
             {translation}
+          </div>
+          <div className='my-4 whitespace-pre-wrap'>
+            {naturalExplanation}
           </div>
           <div className='my-4'>
             {explanation}
